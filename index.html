@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Академия Транссерфинга - DEMO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            background: linear-gradient(180deg, #1E0F4F 0%, #0F0A2E 100%); 
+            color: #F8F1E3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .gold { color: #F5C400; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s; }
+        .loader { 
+            border: 4px solid rgba(245, 196, 0, 0.3); 
+            border-top: 4px solid #F5C400; 
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .nav-btn {
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+        .nav-btn.active {
+            background: #6B46C0;
+            transform: scale(1.1);
+        }
+        .nav-btn:hover {
+            background: rgba(107, 70, 192, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-24">
+
+<!-- КОНТЕЙНЕР -->
+<div class="max-w-xl mx-auto p-4">
+    <!-- ЗАГОЛОВОК -->
+    <div class="text-center py-6">
+        <h1 class="text-5xl font-bold gold mb-2">🌌</h1>
+        <h1 class="text-3xl font-bold gold mb-1">Академия Транссерфинга</h1>
+        <p class="text-sm opacity-60">Версия 3.0 - DEMO</p>
+    </div>
+
+    <!-- === КВЕСТ === -->
+    <div id="sec-0" class="section active">
+        <div class="bg-gradient-to-b from-[#6B46C0]/40 to-[#6B46C0]/10 backdrop-blur-xl rounded-3xl p-8 border border-[#6B46C0]/30">
+            <h2 class="text-3xl gold mb-6 text-center">🎯 Сегодняшний Квест</h2>
+            
+            <div class="space-y-4">
+                <!-- Вопрос -->
+                <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs gold bg-white/10 px-3 py-1 rounded-full">СЛОЖНОСТЬ: СРЕДНЯЯ</span>
+                        <span class="text-gold font-bold">750₽</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Что такое волны вероятности в Транссерфинге?</h3>
+                    <p class="text-sm opacity-70">Ответ найди в одном из наших постов сегодня (10:00-17:00)</p>
+                </div>
+
+                <!-- Подсказка -->
+                <div class="bg-yellow-500/20 border border-yellow-500/50 rounded-2xl p-4">
+                    <p class="text-sm">💡 <span class="gold">Подсказка:</span> Ищи в постах про управление реальностью</p>
+                </div>
+
+                <!-- Поле ввода ответа -->
+                <input type="text" placeholder="Введи ответ..." 
+                       class="w-full bg-white/10 border border-purple-500/50 rounded-2xl px-5 py-4 text-white placeholder-gray-400 focus:outline-none focus:border-gold transition">
+
+                <!-- Кнопка отправки -->
+                <button class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-4 rounded-3xl text-lg hover:shadow-lg hover:shadow-emerald-500/50 transition">
+                    ✅ Отправить ответ
+                </button>
+
+                <!-- Статус -->
+                <div class="bg-emerald-500/20 border border-emerald-500/50 rounded-2xl p-4 text-center">
+                    <p class="text-sm">✅ Ваш ответ верный! Приз начислен.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === ОБУЧЕНИЕ === -->
+    <div id="sec-1" class="section">
+        <div class="bg-gradient-to-b from-[#6B46C0]/40 to-[#6B46C0]/10 backdrop-blur-xl rounded-3xl p-8 border border-[#6B46C0]/30">
+            <h2 class="text-3xl gold mb-6 text-center">📖 Обучение</h2>
+            
+            <div class="space-y-4">
+                <!-- Курс 1 -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg">🌟 Введение в Транссерфинг</h3>
+                        <span class="text-xs gold">Начало</span>
+                    </div>
+                    <p class="text-sm opacity-70 mb-3">Основные принципы управления реальностью</p>
+                    <!-- Прогресс бар -->
+                    <div class="w-full bg-white/10 rounded-full h-2 mb-3">
+                        <div class="bg-emerald-400 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <button class="w-full bg-gold text-black font-bold py-2 rounded-xl text-sm hover:bg-yellow-300 transition">Начать курс</button>
+                </div>
+
+                <!-- Курс 2 -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg">🎯 Практика Транссерфинга</h3>
+                        <span class="text-xs opacity-60">50% пройдено</span>
+                    </div>
+                    <p class="text-sm opacity-70 mb-3">Практические упражнения и техники</p>
+                    <div class="w-full bg-white/10 rounded-full h-2 mb-3">
+                        <div class="bg-emerald-400 h-2 rounded-full" style="width: 50%"></div>
+                    </div>
+                    <button class="w-full bg-emerald-500 text-white font-bold py-2 rounded-xl text-sm hover:bg-emerald-600 transition">Продолжить</button>
+                </div>
+
+                <!-- Курс 3 -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg">⭐ Продвинутый Транссерфинг</h3>
+                        <span class="text-emerald-400">✅ Завершено</span>
+                    </div>
+                    <p class="text-sm opacity-70 mb-3">Продвинутые техники и приемы</p>
+                    <div class="w-full bg-white/10 rounded-full h-2 mb-3">
+                        <div class="bg-emerald-400 h-2 rounded-full" style="width: 100%"></div>
+                    </div>
+                    <button class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl text-sm opacity-70 cursor-not-allowed">✅ Завершено</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === РЕЙТИНГ === -->
+    <div id="sec-2" class="section">
+        <div class="bg-gradient-to-b from-[#6B46C0]/40 to-[#6B46C0]/10 backdrop-blur-xl rounded-3xl p-8 border border-[#6B46C0]/30">
+            <h2 class="text-3xl gold mb-6 text-center">🏆 Лидерборд</h2>
+            
+            <div class="space-y-2">
+                <!-- 1 место -->
+                <div class="bg-gradient-to-r from-yellow-500/20 to-yellow-500/5 border border-yellow-500/50 rounded-2xl p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">🥇</span>
+                            <div>
+                                <p class="font-bold">Иван Смирнов</p>
+                                <p class="text-xs opacity-60">15 побед • 12,500₽</p>
+                            </div>
+                        </div>
+                        <p class="text-2xl gold">#1</p>
+                    </div>
+                </div>
+
+                <!-- 2 место -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">🥈</span>
+                            <div>
+                                <p class="font-bold">Мария Петрова</p>
+                                <p class="text-xs opacity-60">12 побед • 10,200₽</p>
+                            </div>
+                        </div>
+                        <p class="text-2xl">#2</p>
+                    </div>
+                </div>
+
+                <!-- 3 место -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">🥉</span>
+                            <div>
+                                <p class="font-bold">Алексей Козлов</p>
+                                <p class="text-xs opacity-60">8 побед • 6,750₽</p>
+                            </div>
+                        </div>
+                        <p class="text-2xl">#3</p>
+                    </div>
+                </div>
+
+                <!-- Твоя позиция -->
+                <div class="bg-emerald-500/20 border border-emerald-500/50 rounded-2xl p-4 mt-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">😊</span>
+                            <div>
+                                <p class="font-bold">Ты</p>
+                                <p class="text-xs opacity-60">3 победы • 2,250₽</p>
+                            </div>
+                        </div>
+                        <p class="text-2xl gold">#47</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === КОМЬЮНИТИ === -->
+    <div id="sec-3" class="section">
+        <div class="bg-gradient-to-b from-[#6B46C0]/40 to-[#6B46C0]/10 backdrop-blur-xl rounded-3xl p-8 border border-[#6B46C0]/30">
+            <h2 class="text-3xl gold mb-6 text-center">💬 Комьюнити</h2>
+            
+            <div class="space-y-4">
+                <!-- Форма написания -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <textarea placeholder="Поделись своей идеей или вопросом..." 
+                              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold transition resize-none" 
+                              rows="3"></textarea>
+                    <div class="flex gap-2 mt-3">
+                        <button class="flex-1 bg-gold text-black font-bold py-2 rounded-xl hover:bg-yellow-300 transition">📤 Отправить</button>
+                        <select class="bg-white/10 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none">
+                            <option>Общее</option>
+                            <option>Вопрос</option>
+                            <option>Идея</option>
+                            <option>Успех</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Сообщение 1 -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl">👤</span>
+                        <p class="font-bold">Иван Смирнов</p>
+                        <p class="text-xs opacity-60">1ч назад</p>
+                    </div>
+                    <p class="mb-3">Отличный вопрос сегодня! Долго ищу ответ в ваших постах 😄</p>
+                    <div class="flex gap-2">
+                        <button class="text-red-400 hover:text-red-300">❤️ 12</button>
+                        <button class="text-blue-400 hover:text-blue-300">💬 5</button>
+                    </div>
+                </div>
+
+                <!-- Сообщение 2 (закреплено) -->
+                <div class="bg-gold/20 border border-gold/50 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl">📌</span>
+                        <span class="text-xs gold font-bold">ЗАКРЕПЛЕНО</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl">👤</span>
+                        <p class="font-bold">Админ</p>
+                        <p class="text-xs opacity-60">2ч назад</p>
+                    </div>
+                    <p class="mb-3">🎉 Не забывайте следить за постами в инстаграме! Ответы публикуются там каждый день с 10 до 17.</p>
+                    <div class="flex gap-2">
+                        <button class="text-red-400 hover:text-red-300">❤️ 42</button>
+                        <button class="text-blue-400 hover:text-blue-300">💬 18</button>
+                    </div>
+                </div>
+
+                <!-- Сообщение 3 -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl">👤</span>
+                        <p class="font-bold">Мария Петрова</p>
+                        <p class="text-xs opacity-60">45м назад</p>
+                    </div>
+                    <p class="mb-3">Кто-нибудь понимает принцип «маятников»? Много копаю 🤔</p>
+                    <div class="flex gap-2">
+                        <button class="text-red-400 hover:text-red-300">❤️ 8</button>
+                        <button class="text-blue-400 hover:text-blue-300">💬 3</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === ПРИЗЫ === -->
+    <div id="sec-4" class="section">
+        <div class="bg-gradient-to-b from-[#6B46C0]/40 to-[#6B46C0]/10 backdrop-blur-xl rounded-3xl p-8 border border-[#6B46C0]/30 text-center">
+            <h2 class="text-3xl gold mb-8">💰 Ваш Баланс</h2>
+            
+            <!-- Большой баланс -->
+            <div class="bg-gradient-to-r from-emerald-500/30 to-emerald-500/10 border border-emerald-500/50 rounded-3xl p-8 mb-8">
+                <p class="text-sm opacity-70 mb-2">Доступных средств</p>
+                <p class="text-7xl font-bold text-emerald-400">2,250 ₽</p>
+                <p class="text-xs opacity-60 mt-2">+750₽ за сегодняшний квест ✅</p>
+            </div>
+
+            <!-- Кнопка вывода -->
+            <button class="w-full bg-gradient-to-r from-gold to-yellow-500 text-black font-bold py-6 rounded-3xl text-2xl mb-4 hover:shadow-lg hover:shadow-yellow-500/50 transition">
+                💸 Вывести деньги
+            </button>
+
+            <!-- История выплат -->
+            <button class="w-full bg-white/10 border border-white/20 py-4 rounded-3xl text-lg hover:bg-white/20 transition">
+                📜 История выплат
+            </button>
+
+            <!-- Минимальная сумма -->
+            <div class="bg-blue-500/20 border border-blue-500/50 rounded-2xl p-4 mt-6">
+                <p class="text-sm">ℹ️ Минимальная сумма для вывода: <span class="font-bold">300₽</span></p>
+            </div>
+        </div>
+
+        <!-- История выплат (таблица) -->
+        <div class="mt-8 bg-white/5 border border-white/10 rounded-2xl p-4">
+            <h3 class="font-bold mb-4 gold">Недавние выплаты:</h3>
+            <div class="space-y-2">
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                    <div>
+                        <p class="font-bold">Вывод #3</p>
+                        <p class="text-xs opacity-60">12.01.2024 18:30</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-emerald-400">+1,500₽</p>
+                        <p class="text-xs text-emerald-400">✅ Выплачено</p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                    <div>
+                        <p class="font-bold">Вывод #2</p>
+                        <p class="text-xs opacity-60">05.01.2024 18:15</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-emerald-400">+750₽</p>
+                        <p class="text-xs text-emerald-400">✅ Выплачено</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- НАВИГАЦИЯ ВНИЗУ -->
+<div class="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#1E0F4F] to-[#1E0F4F]/90 border-t border-[#6B46C0]/50 backdrop-blur">
+    <div class="max-w-xl mx-auto flex justify-around py-3 px-4">
+        <button onclick="navigate(0)" class="nav-btn active flex flex-col items-center gap-1" id="nav-0">
+            <span class="text-2xl">🎯</span>
+            <span class="text-xs">Квест</span>
+        </button>
+        <button onclick="navigate(1)" class="nav-btn flex flex-col items-center gap-1" id="nav-1">
+            <span class="text-2xl">📖</span>
+            <span class="text-xs">Обучение</span>
+        </button>
+        <button onclick="navigate(2)" class="nav-btn flex flex-col items-center gap-1" id="nav-2">
+            <span class="text-2xl">🏆</span>
+            <span class="text-xs">Рейтинг</span>
+        </button>
+        <button onclick="navigate(3)" class="nav-btn flex flex-col items-center gap-1" id="nav-3">
+            <span class="text-2xl">💬</span>
+            <span class="text-xs">Комьюнити</span>
+        </button>
+        <button onclick="navigate(4)" class="nav-btn flex flex-col items-center gap-1" id="nav-4">
+            <span class="text-2xl">💰</span>
+            <span class="text-xs">Призы</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    function navigate(section) {
+        // Скрыть все секции
+        document.querySelectorAll('.section').forEach(s => {
+            s.classList.remove('active');
+        });
+        
+        // Показать нужную
+        document.getElementById(`sec-${section}`).classList.add('active');
+        
+        // Обновить кнопки навигации
+        document.querySelectorAll('.nav-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        document.getElementById(`nav-${section}`).classList.add('active');
+        
+        // Скролл вверх
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Демо-функции для интерактивности
+    document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.addEventListener('focus', function() {
+            this.style.borderColor = '#F5C400';
+        });
+        textarea.addEventListener('blur', function() {
+            this.style.borderColor = 'rgba(255,255,255,0.1)';
+        });
+    });
+
+    // Демо кнопок
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('Отправить')) {
+            btn.addEventListener('click', function() {
+                alert('✅ Демо: Функция отправки активирована!');
+            });
+        }
+        if (btn.textContent.includes('Вывести')) {
+            btn.addEventListener('click', function() {
+                alert('💸 Демо: Откроется форма вывода денег!');
+            });
+        }
+        if (btn.textContent.includes('История')) {
+            btn.addEventListener('click', function() {
+                alert('📜 Демо: История выплат загружается!');
+            });
+        }
+    });
+
+    console.log('🌌 Добро пожаловать в Академию Транссерфинга!');
+    console.log('Это DEMO версия. Все модули интерактивны!');
+</script>
+
+</body>
+</html>
