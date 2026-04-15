@@ -84,7 +84,14 @@ settings = {
 }
 
 app = FastAPI(title="🌌 Академия Транссерфинга Реальности", version="3.0")
-
+# ✅ ДОБАВЛЕНО
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # ===================== RATE LIMITING =====================
 class RateLimiter:
     def __init__(self, max_requests: int, window: int):
@@ -654,18 +661,28 @@ class QuestScheduler:
 
 # ===================== БЕЗОПАСНОСТЬ =====================
 def verify_telegram_init_data(init_data: str) -> dict:
-    """Проверка подписи Telegram"""
+    """Проверка подписи Telegram с расширенной отладкой"""
     try:
+        if not init_data or not isinstance(init_data, str):
+            logger.warning("❌ initData пуст или неверного типа")
+            raise HTTPException(401, "Нет initData")
+        
         data = dict(parse_qsl(init_data))
         received_hash = data.pop('hash', None)
         
         if not received_hash:
-            logger.warning("Попытка доступа без hash")
+            logger.warning("❌ Попытка доступа без hash")
             raise HTTPException(401, "Нет hash в данных")
+        
+        if not settings["BOT_TOKEN"]:
+            logger.error("❌ BOT_TOKEN не установлен в .env")
+            raise HTTPException(500, "Ошибка конфигурации сервера")
         
         data_check_string = "\n".join(
             f"{k}={str(v)}" for k, v in sorted(data.items())
         )
+        
+        logger.info(f"🔍 Проверка подписи для пользователя: {data.get('user', {}).get('id')}")
         
         secret_key = hashlib.sha256(settings["BOT_TOKEN"].encode()).digest()
         calculated_hash = hmac.new(
@@ -674,16 +691,18 @@ def verify_telegram_init_data(init_data: str) -> dict:
             hashlib.sha256
         ).hexdigest()
         
-        if calculated_hash != received_hash:
-            logger.warning(f"Неверная подпись для данных: {list(data.keys())}")
+        if not hmac.compare_digest(calculated_hash, received_hash):
+            logger.warning(f"❌ Неверная подпись!")
             raise HTTPException(401, "Неверные данные Telegram")
         
+        logger.info(f"✅ Подпись верна!")
         return data
+        
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Ошибка при проверке Telegram данных: {str(e)}")
-        raise HTTPException(401, "Ошибка аутентификации")
+        logger.error(f"❌ Ошибка при проверке Telegram данных: {str(e)}")
+        raise HTTPException(401, f"Ошибка аутентификации")
 
 
 def get_current_user(request: Request):
@@ -1687,10 +1706,21 @@ MINI_APP_HTML = """<!DOCTYPE html>
 </div>
 
 <script>
+    console.log('=== ИНИЦИАЛИЗАЦИЯ МИНИ-ПРИЛОЖЕНИЯ ===');
+    
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
     let initData = Telegram.WebApp.initData;
     let currentBalance = 0;
+    
+    console.log('✅ Telegram.WebApp готов');
+    console.log('📝 initData:', initData);
+    console.log('👤 Пользователь:', Telegram.WebApp.initDataUnsafe.user);
+    
+    if (!initData) {
+        console.error('❌ ОШИБКА: initData не загружен!');
+        document.body.innerHTML = '<h1>❌ Ошибка: Запустите приложение из Telegram</h1>';
+    }
 
     function navigate(section) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -1708,10 +1738,36 @@ MINI_APP_HTML = """<!DOCTYPE html>
 
     async function loadQuest() {
         try {
+            console.log('🔍 initData длина:', initData.length);
+            
+            if (!initData) {
+                console.error('❌ initData пуст!');
+                document.getElementById('quest-container').innerHTML = 
+                    '<p style="color: red;">❌ Ошибка: нет данных Telegram</p>';
+                return;
+            }
+            
             const res = await fetch('/quest/today', {
-                headers: {"X-Telegram-Init-Data": initData}
+                method: 'GET',
+                headers: {
+                    "X-Telegram-Init-Data": initData,
+                    "Content-Type": "application/json"
+                }
             });
+            
+            console.log('📊 Статус:', res.status);
+            
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error('❌ Ошибка:', errorData);
+                document.getElementById('quest-container').innerHTML = 
+                    `<p style="color: red;">❌ Ошибка ${res.status}: ${errorData.detail}</p>`;
+                return;
+            }
+            
             const data = await res.json();
+            console.log('✅ Получены данные:', data);
+            
             const container = document.getElementById('quest-container');
             
             if (data.status === 'no_quest') {
@@ -1724,17 +1780,18 @@ MINI_APP_HTML = """<!DOCTYPE html>
                         <h3 class="text-2xl mb-4">${quest.question}</h3>
                         <p class="text-gold mb-4">Приз: ${quest.prize}₽</p>
                         <input id="answer-input" type="text" placeholder="Ваш ответ..." 
-                               class="w-full bg-white/10 border border-purple rounded-2xl px-5 py-4 mb-4">
+                               class="w-full bg-white/10 border border-purple-500 rounded-2xl px-5 py-4 mb-4 text-white">
                         <button onclick="submitAnswer()" 
                                 class="w-full bg-emerald-400 text-black font-bold py-4 rounded-3xl">
                             Отправить ответ
                         </button>
-                        ${quest.already_answered ? `<p class="text-sm mt-4 text-center opacity-70">Вы уже ответили на этот вопрос</p>` : ''}
                     </div>
                 `;
             }
         } catch (err) {
-            console.error('Ошибка:', err);
+            console.error('❌ ОШИБКА:', err);
+            document.getElementById('quest-container').innerHTML = 
+                `<p style="color: red;">❌ Ошибка: ${err.message}</p>`;
         }
     }
 
@@ -1767,13 +1824,7 @@ MINI_APP_HTML = """<!DOCTYPE html>
                 <div class="bg-white/10 p-4 rounded-2xl">
                     <h3 class="text-lg font-bold mb-2">${course.title}</h3>
                     <p class="text-sm opacity-70 mb-3">${course.description}</p>
-                    <div class="w-full bg-white/10 rounded-full h-2 mb-2">
-                        <div class="bg-emerald-400 h-2 rounded-full" style="width: ${course.progress}%"></div>
-                    </div>
-                    <button onclick="startCourse(${course.id})" 
-                            class="w-full bg-gold text-black font-bold py-2 rounded-xl text-sm">
-                        ${course.completed ? '✅ Завершено' : course.progress > 0 ? 'Продолжить' : 'Начать'}
-                    </button>
+                    <button onclick="startCourse(${course.id})" class="w-full bg-gold text-black font-bold py-2 rounded-xl text-sm">Начать</button>
                 </div>
             `).join('');
         } catch (err) {
@@ -1802,13 +1853,10 @@ MINI_APP_HTML = """<!DOCTYPE html>
             const data = await res.json();
             const container = document.getElementById('rating-container');
             
-            container.innerHTML = data.rating.map((user, idx) => `
-                <div class="bg-white/10 p-4 rounded-2xl flex justify-between items-center">
-                    <div>
-                        <p class="font-bold">${user.place}. ${user.user}</p>
-                        <p class="text-sm opacity-60">${user.wins} побед • ${user.total_prizes}₽</p>
-                    </div>
-                    <p class="text-gold text-2xl">🏆</p>
+            container.innerHTML = data.rating.map((user) => `
+                <div class="bg-white/10 p-4 rounded-2xl flex justify-between">
+                    <div><p class="font-bold">${user.place}. ${user.user}</p></div>
+                    <p class="text-gold">${user.total_prizes}₽</p>
                 </div>
             `).join('');
         } catch (err) {
@@ -1823,43 +1871,14 @@ MINI_APP_HTML = """<!DOCTYPE html>
             });
             const data = await res.json();
             const container = document.getElementById('community-container');
-            
-            container.innerHTML = `
-                <textarea id="community-text" placeholder="Поделитесь идеей..." 
-                          class="w-full bg-white/10 border border-purple rounded-2xl px-5 py-4 text-white mb-4" 
-                          rows="3"></textarea>
-                <button onclick="postMessage()" class="w-full bg-gold text-black font-bold py-3 rounded-2xl mb-4">
-                    📤 Отправить
-                </button>
-            ` + data.messages.map(msg => `
+            container.innerHTML = data.messages.map(msg => `
                 <div class="bg-white/10 p-4 rounded-2xl">
-                    <p class="font-bold text-sm">${msg.author}</p>
-                    <p class="mt-2">${msg.message}</p>
-                    <div class="flex justify-between text-xs opacity-60 mt-2">
-                        <span>❤️ ${msg.likes}</span>
-                        <span>${new Date(msg.created_at).toLocaleString('ru')}</span>
-                    </div>
+                    <p class="font-bold">${msg.author}</p>
+                    <p>${msg.message}</p>
                 </div>
             `).join('');
         } catch (err) {
             console.error('Ошибка:', err);
-        }
-    }
-
-    async function postMessage() {
-        const text = document.getElementById('community-text').value;
-        if (!text) return alert('Напишите сообщение');
-        
-        try {
-            const res = await fetch(`/community/post?message=${encodeURIComponent(text)}&message_type=general`, {
-                method: 'POST',
-                headers: {"X-Telegram-Init-Data": initData}
-            });
-            const data = await res.json();
-            alert(data.message);
-            loadCommunity();
-        } catch (err) {
-            alert('Ошибка отправки');
         }
     }
 
@@ -1877,15 +1896,11 @@ MINI_APP_HTML = """<!DOCTYPE html>
     }
 
     function showWithdrawScreen() {
-        if (currentBalance < 300) {
-            alert('Минимальная сумма вывода — 300 ₽');
-            return;
-        }
-        alert('Функция вывода (см. полный код)');
+        alert('Минимум 300₽');
     }
 
     function showHistory() {
-        alert('Функция истории (см. полный код)');
+        alert('История выплат');
     }
 
     window.onload = () => {
